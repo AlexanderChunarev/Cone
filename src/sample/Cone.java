@@ -1,68 +1,57 @@
 package sample;
 
-import javafx.scene.layout.Pane;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 
+public class Cone {
+    private double firstAngle, secondAngle;
+    private double coneX1, coneY1, coneX2, coneY2;
+    private double linkedX1, linkedY1, linkedX2, linkedY2;
 
-public class Cone extends Pane {
-    private int x1, y1, x2, y2;
-    private Line line1;
-    private Line line2;
-    private Line verLine1;
-    private Line verLine2;
-
-
-    Cone(int x1, int y1, int x2, int y2) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+    public Cone(double firstAngle, double secondAngle) {
+        this.firstAngle = firstAngle;
+        this.secondAngle = secondAngle;
     }
 
-    void drawCone(Pane pane) {
-        line1 = new Line(200, 200, x1, y1);
-        line2 = new Line(200, 200, x2, y2);
-        line1.setStroke(Color.RED);
-        line2.setStroke(Color.RED);
-        drawVerticals(line1, line2, pane);
-        pane.getChildren().addAll(line1, line2);
+    private void drawCone(GraphicsContext graphicsContext) {
+        graphicsContext.setStroke(Color.RED);
+        coneX1 = 200 + Math.sin(Math.toRadians(firstAngle + 90)) * 350;
+        coneY1 = 200 + Math.cos(Math.toRadians(firstAngle + 90)) * 350;
+        coneX2 = 200 + Math.sin(Math.toRadians(secondAngle + 90)) * 350;
+        coneY2 = 200 + Math.cos(Math.toRadians(secondAngle + 90)) * 350;
+        graphicsContext.strokeLine(200, 200, coneX1, coneY1);
+        graphicsContext.strokeLine(200, 200, coneX2, coneY2);
+
     }
 
-    private void drawVerticals(Line firstLine, Line secondLine, Pane pane) {
-        if (firstLine.getEndY() > secondLine.getEndY()) {
-            verLine1 = new Line(200, 200
-                    , firstLine.getEndY()
-                    , Math.abs(firstLine.getStartX() - firstLine.getEndX() + firstLine.getStartY()));
-            verLine2 = new Line(200, 200
-                    , secondLine.getStartX() - secondLine.getEndY() + secondLine.getStartX()
-                    , secondLine.getEndX());
+    private void drawVericals(GraphicsContext graphicsContext) {
+        graphicsContext.setStroke(Color.GREEN);
+        if (firstAngle < secondAngle) {
+            firstAngle += 180;
         } else {
-            verLine1 = new Line(200, 200
-                    , secondLine.getStartX() - firstLine.getEndY() + firstLine.getStartX()
-                    , firstLine.getEndX());
-            verLine2 = new Line(200, 200
-                    , secondLine.getEndY(),
-                    Math.abs(secondLine.getStartX() - secondLine.getEndX() + secondLine.getStartY()));
-
+            secondAngle += 180;
         }
-
-        verLine1.setStroke(Color.BLUE);
-        verLine2.setStroke(Color.BLUE);
-        pane.getChildren().addAll(verLine1, verLine2);
+        linkedX1 = 200 + Math.sin(Math.toRadians(firstAngle)) * 350;
+        linkedY1 = 200 + Math.cos(Math.toRadians(firstAngle)) * 350;
+        linkedX2 = 200 + Math.sin(Math.toRadians(secondAngle)) * 350;
+        linkedY2 = 200 + Math.cos(Math.toRadians(secondAngle)) * 350;
+        graphicsContext.strokeLine(200, 200, linkedX1, linkedY1);
+        graphicsContext.strokeLine(200, 200, linkedX2, linkedY2);
     }
 
-    void fillCone(Pane pane) {
-        Polygon polygon = new Polygon();
-        if (line1.getEndX() > 0)
-        polygon.getPoints().addAll(200.0, 200.0,
-                verLine1.getEndX(), verLine1.getEndY(),
-                line2.getEndX(), line2.getEndY(),
-                line1.getEndX(), line1.getEndY(),
-                verLine2.getEndX(), verLine2.getEndY());
-        polygon.setFill(Color.GREEN);
-        polygon.setOpacity(0.5);
-        pane.getChildren().add(polygon);
+    private void fillSpace(GraphicsContext graphicsContext) {
+        graphicsContext.setGlobalAlpha(0.5);
+        graphicsContext.setFill(Color.BLUE);
+        graphicsContext.fillPolygon(new double[]{200, coneX1, coneX2}
+                , new double[]{200, coneY1, coneY2}, 3);
+        graphicsContext.setFill(Color.GREEN);
+        graphicsContext.fillPolygon(new double[]{200, linkedX1, coneX2, coneX1, linkedX2}
+                , new double[]{200, linkedY1, coneY2, coneY1, linkedY2}, 5);
+    }
+
+    public void draw(GraphicsContext graphicsContext) {
+        drawCone(graphicsContext);
+        drawVericals(graphicsContext);
+        fillSpace(graphicsContext);
     }
 }
