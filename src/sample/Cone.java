@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 
 public class Cone {
     private double firstAngle, secondAngle;
-    private double coneX1, coneY1, coneX2, coneY2;
-    private double linkedX1, linkedY1, linkedX2, linkedY2;
+    private double coneX1, coneY1;
+    private double linkedX1, linkedY1;
 
     public Cone(double firstAngle, double secondAngle) {
         this.firstAngle = firstAngle;
@@ -15,43 +15,43 @@ public class Cone {
 
     private void drawCone(GraphicsContext graphicsContext) {
         graphicsContext.setStroke(Color.RED);
-        coneX1 = 200 + Math.sin(Math.toRadians(firstAngle + 90)) * 350;
-        coneY1 = 200 + Math.cos(Math.toRadians(firstAngle + 90)) * 350;
-        coneX2 = 200 + Math.sin(Math.toRadians(secondAngle + 90)) * 350;
-        coneY2 = 200 + Math.cos(Math.toRadians(secondAngle + 90)) * 350;
-        graphicsContext.strokeLine(200, 200, coneX1, coneY1);
-        graphicsContext.strokeLine(200, 200, coneX2, coneY2);
-
+        double first, second;
+        if (firstAngle < secondAngle) {
+            first = firstAngle;
+            second = secondAngle;
+        }
+        else {
+            first = secondAngle;
+            second = firstAngle;
+        }
+        for (int i = (int) first; i <= second; i++) {
+            coneX1 = 200 + Math.sin(Math.toRadians(i + 90)) * 350;
+            coneY1 = 200 + Math.cos(Math.toRadians(i + 90)) * 350;
+            graphicsContext.strokeLine(200, 200, coneX1, coneY1);
+        }
     }
 
     private void drawVericals(GraphicsContext graphicsContext) {
         graphicsContext.setStroke(Color.GREEN);
+        double first, second;
         if (firstAngle < secondAngle) {
-            firstAngle += 180;
+            second = firstAngle + 180;
+            first = secondAngle;
         } else {
-            secondAngle += 180;
+            first = firstAngle;
+            second = secondAngle + 180;
         }
-        linkedX1 = 200 + Math.sin(Math.toRadians(firstAngle)) * 350;
-        linkedY1 = 200 + Math.cos(Math.toRadians(firstAngle)) * 350;
-        linkedX2 = 200 + Math.sin(Math.toRadians(secondAngle)) * 350;
-        linkedY2 = 200 + Math.cos(Math.toRadians(secondAngle)) * 350;
-        graphicsContext.strokeLine(200, 200, linkedX1, linkedY1);
-        graphicsContext.strokeLine(200, 200, linkedX2, linkedY2);
+        for (int i = (int) first; i <= second; i++) {
+            linkedX1 = 200 + Math.sin(Math.toRadians(i)) * 350;
+            linkedY1 = 200 + Math.cos(Math.toRadians(i)) * 350;
+            graphicsContext.strokeLine(200, 200, linkedX1, linkedY1);
+        }
     }
 
-    private void fillSpace(GraphicsContext graphicsContext) {
-        graphicsContext.setGlobalAlpha(0.5);
-        graphicsContext.setFill(Color.BLUE);
-        graphicsContext.fillPolygon(new double[]{200, coneX1, coneX2}
-                , new double[]{200, coneY1, coneY2}, 3);
-        graphicsContext.setFill(Color.GREEN);
-        graphicsContext.fillPolygon(new double[]{200, linkedX1, coneX2, coneX1, linkedX2}
-                , new double[]{200, linkedY1, coneY2, coneY1, linkedY2}, 5);
-    }
 
     public void draw(GraphicsContext graphicsContext) {
         drawCone(graphicsContext);
         drawVericals(graphicsContext);
-        fillSpace(graphicsContext);
+
     }
 }
