@@ -14,7 +14,8 @@ public class Cone {
     }
 
     private void drawCone(GraphicsContext graphicsContext) {
-        graphicsContext.setStroke(Color.RED);
+        graphicsContext.setStroke(Color.GREEN);
+        graphicsContext.setGlobalAlpha(0.5);
         double first, second;
         if (firstAngle < secondAngle) {
             first = firstAngle;
@@ -32,7 +33,7 @@ public class Cone {
     }
 
     private void drawVericals(GraphicsContext graphicsContext) {
-        graphicsContext.setStroke(Color.GREEN);
+        graphicsContext.setStroke(Color.DARKBLUE);
         double first, second;
         if (firstAngle < secondAngle) {
             second = firstAngle + 180;
